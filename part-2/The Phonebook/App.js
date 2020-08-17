@@ -19,13 +19,18 @@ const App = (props) => {
     const found = persons.some((person) => person.name === newName);
 
     if (!found) {
-      setPersons(persons.concat(newObject));
+      const newpersons = persons.concat(newObject);
+      setPersons(newpersons);
+      //setPersons(persons.concat(newObject));
       persons.map((person) =>
         console.log("map all persons using map " + person.name)
       );
 
       setNewName("");
       setNewNumber("");
+      setFilter(newpersons);
+      console.log("updated");
+      console.log(newpersons);
     } else alert(`${newName} is already added to phonebook`);
   };
   const handleNameChange = (event) => {
@@ -40,6 +45,7 @@ const App = (props) => {
     setFilter(
       persons.filter((person) => person.name.indexOf(event.target.value) !== -1)
     );
+    console.log(event.target.value);
   };
   return (
     <div>
