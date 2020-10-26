@@ -40,7 +40,7 @@ const App = () => {
     fetchData();
     
   }, []);
-  //console.log(`the weatehr ${countrieAndWeather.weather}`);
+
   const handleFilter = (event) => {
     const targetName = event.target.value.toUpperCase();
     console.log(targetName);
