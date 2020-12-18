@@ -72,6 +72,16 @@ li > div {
   -webkit-animation-fill-mode: forwards;
   animation-fill-mode: forwards;
 }
+.fail {
+  color: red;
+  background: lightgrey;
+  font-size: 10px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
 @keyframes cssAnimation {
   0% {
     opacity: 1;

@@ -1,6 +1,6 @@
 import axios from "axios";
-const baseUrl = '/api/persons';//'http://localhost:3003/api/persons';
-
+const baseUrl = 'http://localhost:3002/api/persons';
+//'/api/persons';
 const getAll = () => {
   const request = axios.get(baseUrl);
   return request.then((response) => response.data);
@@ -8,7 +8,17 @@ const getAll = () => {
 
 const create = (newObject) => {
   const request = axios.post(baseUrl, newObject);
-  return request.then((response) => response.data);
+  console.log('out they')
+  return request
+  .then((response) =>{
+    console.log('here is the res')
+    console.log(response)
+    return response.data})
+  .catch((err)=>{
+  throw err;
+    //console.log(err.response.data)
+    //console.log(`this is the err ${err}`);
+    });
 };
 
 const update = (id, updatedObject) => {

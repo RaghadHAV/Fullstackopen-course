@@ -10,14 +10,16 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [Filter, setFilter] = useState(persons);
-  const [successMsg, setSuccessMsge] = useState("");
+  const [Msg, setMsge] = useState("");
+  const [notificationStatus, setNotificationStatus] = useState("");
   useEffect(() => {
     noteService.getAll().then((intialResponse) => {
       setPersons(intialResponse);
+      console.log(`here is the initial res ${intialResponse}`);
       setFilter(intialResponse);
     });
   }, []);
- 
+
   const AddItem = (event) => {
     event.preventDefault();
 
@@ -26,40 +28,30 @@ const App = () => {
       number: newNumber,
       id: persons.length + 1,
     };
-    console.log(newObject);
-    const found = persons.some((person) => person.name === newName);
-    console.log("found here is " + found);
+    // const found = persons.some((person) => person.name === newName);
+    // console.log("found here is " + found);
     
-    const differentNo = persons.some(
-      (person) => person.name === newName && person.number !== newNumber
-    );
+    // const differentNo = persons.some(
+    //   (person) => person.name === newName && person.number !== newNumber
+    // );
 
-    if (!found && newName !== "" && newNumber !== "") {
-      const newpersons = persons.concat(newObject);
-      setPersons(newpersons);
-      console.log(newpersons);
+    //if (!found && newName !== "" && newNumber !== "") {
+      
+    
       noteService.create(newObject).then((intialResponse) => {
-        console.log(intialResponse);
+        const newpersons = persons.concat(newObject);
+        setPersons(newpersons);
+        setFilter(newpersons);
+        setMsge(`${newName} Added Successfully`);
+        setNotificationStatus("success");
+        setNewName("");
+        setNewNumber("");
+      }).catch((error)=>{
+        console.log(error.response)
+        setMsge(`${error.response.data.error}`);
+        setNotificationStatus("fail");
       });
 
-      setNewName("");
-      setNewNumber("");
-      setFilter(newpersons);
-
-      setSuccessMsge(`${newName} Added Successfully`);
-    } else if (differentNo) {
-      var requiredID = 1;
-      alert(` Updating number of ${newName}?`);
-      persons.map((person) => {
-        if (person.name === newName && person.number !== newNumber) {
-          requiredID = person.id;
-        }
-      });
-      console.log(`${requiredID} req id`);
-      noteService.update(requiredID, newObject);
-    } else if ((newName === "") | (newNumber === " ")) {
-      alert(`You need to add something`);
-    } else alert(`${newName} is already added to phonebook`);
   };
   const handleNameChange = (event) => {
     event.preventDefault();
@@ -70,27 +62,36 @@ const App = () => {
     setNewNumber(event.target.value);
   };
   const handleFilter = (event) => {
-    setSuccessMsge("");
-    setFilter(
-      persons.filter((person) => person.name.indexOf(event.target.value) !== -1)
-    );
-    console.log(event.target.value);
+    setMsge("");
+   const filteredPerson = persons.filter(person => 
+     person.name && person.name.includes(event.target.value));
+   console.log(filteredPerson);
+    setFilter(filteredPerson);
   };
   const handleDelete = (id) => {
-    if (window.confirm(`Are you sure you want to delete ${id}?`)) {
+    const matchedPersons = persons.filter(person => 
+      person.id === id
+      );
+      const name = matchedPersons[0].name; 
+    if (window.confirm(`Are you sure you want to delete ${name}?`)) {
       noteService.deleteItem(id).then((intialResponse) => {
-        console.log(intialResponse);
+        const newperson= persons.filter(person =>
+           person.id !== id
+        );
+        setFilter(newperson);
       });
     }
+   
   };
   const Notification = ({ msg }) => {
     if (msg === "") return null;
-    else return <div className="success">{msg}</div>;
+    
+    else return <div className={notificationStatus}>{msg}</div>;
   };
   return (
     <div>
       <h2 className="main-title">Phonebook</h2>
-      <Notification msg={successMsg} />
+      <Notification msg={Msg} />
 
       <FilterName handleFilter={handleFilter} />
       <h3>Add New Contact</h3>
